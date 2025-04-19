@@ -1,0 +1,83 @@
+<!-- File: frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grammar Scoring Engine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f4f4f4;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    input, button {
+      margin-top: 15px;
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    p, ul {
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Grammar Scoring Engine</h1>
+  <input type="file" id="audioInput" accept="audio/*" />
+  <button onclick="uploadAudio()">Analyze</button>
+
+  <h3>Transcript:</h3>
+  <p id="transcript"></p>
+  <h3>Grammar Score:</h3>
+  <p id="score"></p>
+  <h3>Suggestions:</h3>
+  <ul id="suggestions"></ul>
+
+  <script>
+    async function uploadAudio() {
+      const file = document.getElementById("audioInput").files[0];
+      const formData = new FormData();
+      formData.append("audio", file);
+
+      const response = await fetch("http://localhost:5000/analyze", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await response.json();
+      document.getElementById("transcript").innerText = data.transcript;
+      document.getElementById("score").innerText = data.score + " / 5";
+
+      const suggestionsList = document.getElementById("suggestions");
+      suggestionsList.innerHTML = "";
+      data.suggestions.forEach(s => {
+        const li = document.createElement("li");
+        li.innerText = s;
+        suggestionsList.appendChild(li);
+      });
+    }
+  </script>
+</body>
+</html>
