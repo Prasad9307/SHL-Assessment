@@ -1,0 +1,4 @@
+flask
+whisper
+language_tool_python
+torch
